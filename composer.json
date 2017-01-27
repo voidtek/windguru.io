@@ -1,0 +1,38 @@
+{
+    "name": "voidtek/windguru.io",
+    "homepage": "https://github.com/voidtek/windguru.io",
+    "description": "Windguru.io: Windguru Client.",
+    "keywords": ["windguru", "client"],
+    "type": "library",
+    "license": "GPL-2.0+",
+    "support": {
+        "issues": "https://github.com/voidtek/windguru.io/issues",
+        "source": "https://github.com/voidtek/windguru.io"
+    },
+    "authors": [
+        {
+            "name": "voidtek: Victor DA COSTA",
+            "email": "vdacosta@voidtek.com",
+            "role": "Author"
+        }
+    ],
+    "require": {
+        "php-http/httplug": "^1.1",
+        "php-http/discovery": "^1.1",
+        "php-http/client-common": "^1.4"
+    },
+    "require-dev": {
+        "php-http/guzzle6-adapter": "^1.1",
+        "squizlabs/php_codesniffer": "^2.0"
+    },
+    "scripts": {
+        "phpcs": "./vendor/bin/phpcs --ignore=vendor .",
+        "phpcbf": "./vendor/bin/phpcbf --ignore=vendor ."
+    },
+    "autoload": {
+        "psr-4": {
+          "voidtek\\Windguru.io\\": "src/",
+          "voidtek\\Windguru.io\\Tests\\": "tests/src/"
+        }
+    }
+}
