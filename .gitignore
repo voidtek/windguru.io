@@ -39,5 +39,5 @@
 # JIRA plugin
 atlassian-ide-plugin.xml
 
-
+vendor
 composer.lock
