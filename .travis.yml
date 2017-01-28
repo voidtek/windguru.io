@@ -16,6 +16,9 @@ php:
 install:
   - composer install
 
+script:
+  - composer phpcs
+
 after_success:
   - composer coveralls
   - composer codacy
