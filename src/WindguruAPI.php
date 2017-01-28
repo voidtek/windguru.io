@@ -1,4 +1,15 @@
 <?php
+/**
+ * File WindguruAPI.php
+ * 
+ * PHP Version 5
+ *
+ * @category PHP
+ * @package  WindguruIO
+ * @author   Voidtek <vdacosta@voidtek.com>
+ * @license  http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link     https://github.com/voidtek/windguru.io
+ */
 
 namespace voidtek\WindguruIO;
 
@@ -9,13 +20,17 @@ use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Psr\Http\Message\ResponseInterface;
 
-
 /**
- * Class WindguruAPIClient
+ * WindguruAPI Class
  *
- * @package voidtek\WindguruIO
+ * @category Class
+ * @package  WindguruIO
+ * @author   Voidtek <vdacosta@voidtek.com>
+ * @license  http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link     https://github.com/voidtek/windguru.io
  */
-class WindguruAPI {
+class WindguruAPI
+{
 
     /**
      * The default Windguru endpoint template.
@@ -26,38 +41,51 @@ class WindguruAPI {
     const ENDPOINT='http://www.windguru.cz';
     
     /**
+     * Private HttpClient
+     * 
      * @var HttpClient
      */
-    private $httpClient;
+    private $_httpClient;
 
     /**
+     * Private MessageFactory
+     * 
      * @var MessageFactory
      */
-    private $messageFactory;
+    private $_messageFactory;
 
     /**
-     * @param HttpClient|null     $httpClient
-     * @param MessageFactory|null $messageFactory
+     * Constructor WindguruAPI
+     * 
+     * @param HttpClient|null     $httpClient     The HttpClient parameter.
+     * @param MessageFactory|null $messageFactory The messageFactory parameter.
      */
-    public function __construct(HttpClient $httpClient = null, MessageFactory $messageFactory = null)
-    {
-        $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
-        $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
+    public function __construct(
+        HttpClient $httpClient = null, 
+        MessageFactory $messageFactory = null
+    ) {
+    
+        $this->_httpClient = $httpClient ?: HttpClientDiscovery::find();
+        $this->_messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
     }
 
     /**
      * Call an API endpoint.
      *
-     * @param string $someArgument
+     * @param string $someArgument The Argument for this call.
      *
      * @return string
      */
     public function call($someArgument)
     {
-        $request = $this->messageFactory->createRequest('GET', self::ENDPOINT.'/some_operation?argument='.$someArgument);
+        $request = $this->_messageFactory
+            ->createRequest(
+                'GET', 
+                self::ENDPOINT.'/some_operation?argument='.$someArgument
+            );
 
         try {
-            $response = $this->httpClient->sendRequest($request);
+            $response = $this->_httpClient->sendRequest($request);
         } catch (\Http\Client\Exception $e) {
             throw new \RuntimeException('Something happened during HTTP request');
         }

@@ -15,3 +15,8 @@ php:
 
 install:
   - composer install
+
+after_success:
+  - composer coveralls
+  - composer codacy
+  - composer scrutinizer
