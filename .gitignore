@@ -42,3 +42,4 @@ atlassian-ide-plugin.xml
 vendor
 composer.lock
 logs
+cache

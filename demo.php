@@ -1,7 +1,7 @@
 <?php
 /**
  * File demo.php
- * 
+ *
  * PHP Version 5
  *
  * @category PHP
@@ -15,5 +15,15 @@ require_once __DIR__ . "/vendor/autoload.php";
 
 use voidtek\WindguruIO\WindguruAPI;
 
+if (PHP_SAPI === 'cli') {
+    $idspot = $argv[1];
+}
+else {
+    $idspot = $_GET['idspot'];
+}
+
+if(empty($idspot)) return;
+
 $windguruAPI = new WindguruAPI();
-$windguruAPI->call('toto');
+$windguruAPI->setSpot($idspot);
+$windguruAPI->getData();
