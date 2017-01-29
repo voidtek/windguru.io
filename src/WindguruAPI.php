@@ -91,22 +91,29 @@ class WindguruAPI
         $this->_httpClient = $httpClient ?: HttpClientDiscovery::find();
         $this->_messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
 
-        if(!file_exists(self::CACHEFOLDER)) {
-          mkdir(self::CACHEFOLDER, 0777, true);
+        if (!file_exists(self::CACHEFOLDER)) {
+            mkdir(self::CACHEFOLDER, 0777, true);
         }
 
-        if(!file_exists(self::LOGFOLDER)) {
-          mkdir(self::LOGFOLDER, 0777, true);
+        if (!file_exists(self::LOGFOLDER)) {
+            mkdir(self::LOGFOLDER, 0777, true);
         }
 
         $this->_log = new Logger('WindguruAPI');
-        $this->_log->pushHandler(new StreamHandler(self::LOGFOLDER . '/' . date('Ymd') . '.log', Logger::WARNING));
+        $this->_log->pushHandler(
+            new StreamHandler(
+                self::LOGFOLDER . '/' . date('Ymd') . '.log',
+                Logger::WARNING
+            )
+        );
     }
 
     /**
      * Set the Id of the Spot.
      *
-     * @param string $someArgument The Argument for this call.
+     * @param string $idSpot The id of the spot.
+     *
+     * @return nothing
      */
     public function setSpot($idSpot)
     {
@@ -130,11 +137,11 @@ class WindguruAPI
      */
     public function getData()
     {
-      if(file_exists(self::CACHEFOLDER.'/'.$this->_idSpot)) {
-        $this->getCacheData();
-      } else {
-        $this->getOnlineData();
-      }
+        if (file_exists(self::CACHEFOLDER.'/'.$this->_idSpot)) {
+            $this->_getCacheData();
+        } else {
+            $this->_getOnlineData();
+        }
     }
 
     /**
@@ -142,7 +149,7 @@ class WindguruAPI
      *
      * @return DOMDocument
      */
-    public function getOnlineData()
+    private function _getOnlineData()
     {
         $request = $this->_messageFactory
             ->createRequest(
@@ -168,29 +175,29 @@ class WindguruAPI
         $number = 1;
 
         foreach ($nodes as $node) {
-          if($node->nodeName == "script") {
-            $nodeData = $xml->addChild('tab');
-            $nodeData->addChild('number',$number);
-            $nodeData->addChild(
-              'wg_fcst_tab_data',
-              $this->extractVariableIntoScript(
-                $node->nodeValue,
-                'wg_fcst_tab_data_'.$number
-              )
-            );
-            $nodeData->addChild(
-              'wgopts',
-              $this->extractVariableIntoScript(
-                $node->nodeValue,
-                'wgopts_'.$number
-              )
-            );
-            $number++;
-          }
+            if ($node->nodeName == "script") {
+                $nodeData = $xml->addChild('tab');
+                $nodeData->addChild('number', $number);
+                $nodeData->addChild(
+                    'wg_fcst_tab_data',
+                    $this->_extractVariableIntoScript(
+                        $node->nodeValue,
+                        'wg_fcst_tab_data_'.$number
+                    )
+                );
+                $nodeData->addChild(
+                    'wgopts',
+                    $this->_extractVariableIntoScript(
+                        $node->nodeValue,
+                        'wgopts_'.$number
+                    )
+                );
+                $number++;
+            }
         }
 
         $this->_data = $xml;
-        $this->setCacheData();
+        $this->_setCacheData();
 
         $this->_log->warning($this->_idSpot . ": Load online data.");
     }
@@ -198,27 +205,30 @@ class WindguruAPI
     /**
      * Extract value of a variable into the JS.
      *
-     * @param string $script The String.
+     * @param string $script   The String.
      * @param string $variable The variable.
      *
      * @return string
      */
-    private function extractVariableIntoScript($script, $variable)
+    private function _extractVariableIntoScript($script, $variable)
     {
-      preg_match('/var ' . $variable . ' = (.*);/', $script, $m );
-      return $m[1];
+        preg_match('/var ' . $variable . ' = (.*);/', $script, $m);
+        return $m[1];
     }
 
     /**
      * Set the data of the Spot on cache.
      *
-     * @param string $data The Data.
+     * @return nothing
      */
-    private function setCacheData()
+    private function _setCacheData()
     {
-      // todo assert notNull $this->_data.
+        // todo assert notNull $this->_data.
 
-      file_put_contents(self::CACHEFOLDER.'/'.$this->_idSpot, $this->_data->asXML());
+        file_put_contents(
+            self::CACHEFOLDER.'/'.$this->_idSpot,
+            $this->_data->asXML()
+        );
     }
 
     /**
@@ -226,16 +236,16 @@ class WindguruAPI
      *
      * @return string/NULL.
      */
-    private function getCacheData()
+    private function _getCacheData()
     {
-      $current = file_get_contents(self::CACHEFOLDER.'/'.$this->_idSpot);
-      $xml = new \SimpleXMLElement($current);
-      if(time() - $xml['updated'] <= self::CACHETIME) {
-        $this->_data = $xml;
-        $this->_log->warning($this->_idSpot . ": Load cache data.");
-      } else {
-        $this->getOnlineData();
-      }
+        $current = file_get_contents(self::CACHEFOLDER.'/'.$this->_idSpot);
+        $xml = new \SimpleXMLElement($current);
+        if (time() - $xml['updated'] <= self::CACHETIME) {
+            $this->_data = $xml;
+            $this->_log->warning($this->_idSpot . ": Load cache data.");
+        } else {
+            $this->_getOnlineData();
+        }
     }
 
 }

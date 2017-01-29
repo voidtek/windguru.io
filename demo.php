@@ -17,12 +17,13 @@ use voidtek\WindguruIO\WindguruAPI;
 
 if (PHP_SAPI === 'cli') {
     $idspot = $argv[1];
-}
-else {
+} else {
     $idspot = $_GET['idspot'];
 }
 
-if(empty($idspot)) return;
+if (empty($idspot)) {
+    return;
+}
 
 $windguruAPI = new WindguruAPI();
 $windguruAPI->setSpot($idspot);
